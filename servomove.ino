@@ -6,13 +6,6 @@
 //HC-05 bluetooth module SoftwareSerial library
 #include <SoftwareSerial.h> 
 SoftwareSerial MyBlue(2, 3); // Software definition for serial pins; RX2 & TX3
-/* Legend (first number is serial entry from bluetooth, second number is number of servings sent by each module)
- * 0-00 
- * 1-01
- * 2-10
- * 3-02
- * 4-20
- */
 int val = 0; // declare variable for input from device
 
 //ultrasonic sensor
@@ -26,9 +19,9 @@ UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 // Servo Setup
 #include <Servo.h>
 Servo myservo;  // create servo object to control a servo
-const int servingsFirst = 0;  // number of servings for first dispenser
+int servingsFirst = 0;  // number of servings for first dispenser
 Servo myservo2; // second servo
-const int servingsSecond = 0; // number of servings for second dispenser
+int servingsSecond = 0; // number of servings for second dispenser
 
 
 
@@ -48,6 +41,63 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (MyBlue.available()) //checks if connected and assigns read value to val
    val = MyBlue.read(); 
+  /*
+   * Legend: (val from bluetooth-serving sizes)
+   * 0-00
+   * 1-01
+   * 2-10
+   * 3-11
+   * 4-21
+   * 5-12
+   * 6-02
+   * 7-20
+   * 8-22
+   */
+  if (val == '0')
+  {
+    servingsFirst = 0;
+    servingsSecond = 0;
+  }
+  else if (val == '1')
+  {
+    servingsFirst = 0;
+    servingsSecond = 1;
+  }
+  else if (val == '2')
+  {
+    servingsFirst = 1;
+    servingsSecond = 0;
+  }
+  else if (val == '3')
+  {
+    servingsFirst = 1;
+    servingsSecond = 1;
+  }
+  else if (val == '4')
+  {
+    servingsFirst = 2;
+    servingsSecond = 1;
+  }
+  else if (val == '5')
+  {
+    servingsFirst = 1;
+    servingsSecond = 2;
+  }
+  else if (val == '6')
+  {
+    servingsFirst = 0;
+    servingsSecond = 2;
+  }
+  else if (val == '7')
+  {
+    servingsFirst = 2;
+    servingsSecond = 0;
+  }
+  else if (val == '8')
+  {
+    servingsFirst = 2;
+    servingsSecond = 2;
+  }
   int tempOne=digitalRead(52);      // assign light sensor one to port 52
   int tempTwo=digitalRead(50);      // light sensor two to port 50
   Serial.println("Intensity1=");    //print on serial monitor using ""
